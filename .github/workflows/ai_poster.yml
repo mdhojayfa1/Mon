@@ -1,3 +1,4 @@
+name: 💰 Automated AI Payout System
 name: AI Reward Poster
 
 on:
@@ -6,6 +7,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  earn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
   post:
     runs-on: ubuntu-latest
     # Added timeout to prevent runaway resource usage
@@ -19,6 +28,21 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: 📦 Install Dependencies
+        run: pip install google-generativeai beem requests
+
+      - name: 🧠 AI Content Generation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python src/ai_content.py
+
+      - name: 🚀 Multi-Blockchain Broadcast
+        env:
+          HIVE_USERNAME: ${{ secrets.HIVE_USERNAME }}
+          HIVE_POSTING_KEY: ${{ secrets.HIVE_POSTING_KEY }}
+          STEEM_USERNAME: ${{ secrets.STEEM_USERNAME }}
+          STEEM_POSTING_KEY: ${{ secrets.STEEM_POSTING_KEY }}
+        run: python src/hive_poster.py
       - name: Install dependencies
         run: pip install google-generativeai beem requests
 
