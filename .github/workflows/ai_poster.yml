@@ -1,0 +1,35 @@
+name: 💰 Automated AI Payout System
+
+on:
+  schedule:
+    - cron: '0 10 * * *' # Once a day at 10 AM UTC
+  workflow_dispatch:
+
+jobs:
+  earn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 📦 Install Dependencies
+        run: pip install google-generativeai beem requests
+
+      - name: 🧠 AI Content Generation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python src/ai_content.py
+
+      - name: 🚀 Multi-Blockchain Broadcast
+        env:
+          HIVE_USERNAME: ${{ secrets.HIVE_USERNAME }}
+          HIVE_POSTING_KEY: ${{ secrets.HIVE_POSTING_KEY }}
+          STEEM_USERNAME: ${{ secrets.STEEM_USERNAME }}
+          STEEM_POSTING_KEY: ${{ secrets.STEEM_POSTING_KEY }}
+        run: python src/hive_poster.py
